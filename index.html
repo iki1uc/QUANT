@@ -1,146 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>QUANT — Final SYN Engine</title>
-
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: #0a0a0a;
-        color: #e0e0e0;
-        font-family: Consolas, monospace;
-    }
-
-    header {
-        padding: 20px;
-        text-align: center;
-        background: #111;
-        border-bottom: 2px solid #222;
-    }
-
-    header h1 {
-        margin: 0;
-        font-size: 26px;
-        color: #6cf;
-        letter-spacing: 2px;
-    }
-
-    .panel {
-        width: 420px;
-        margin: 20px auto;
-        padding: 20px;
-        background: #111;
-        border: 1px solid #333;
-        border-radius: 6px;
-    }
-
-    .panel-title {
-        font-size: 18px;
-        color: #6cf;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-
-    .panel div {
-        margin: 6px 0;
-        font-size: 15px;
-    }
-
-    canvas {
-        display: block;
-        margin: 30px auto;
-        background: #000;
-        border: 1px solid #333;
-        border-radius: 6px;
-    }
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>QUANT — Triangle → Multiscale Analysis</title>
+  <style>
+    body{margin:0;background:#000;color:#0f0;font-family:Consolas,monospace}
+    header{padding:12px;background:#071;border-bottom:1px solid #033}
+    header h1{margin:0;color:#6cf}
+    #controls{padding:12px;display:flex;gap:8px;align-items:center}
+    button{background:#6cf;color:#000;border:none;padding:8px;border-radius:6px;cursor:pointer}
+    #out{padding:12px}
+    pre{background:#020;padding:10px;border-radius:6px;max-height:60vh;overflow:auto}
+  </style>
 </head>
-
 <body>
-
-<header>
-    <h1>QUANT — Final SYN Engine</h1>
-</header>
-
-<div class="panel">
-    <div class="panel-title">Form‑Etage</div>
-    <div>Etage: <span id="etage">–</span></div>
-    <div>Modul: <span id="modul">–</span></div>
-    <div>Aufgabe: <span id="aufgabe">–</span></div>
-
-    <hr style="border:0;border-top:1px solid #333;margin:12px 0;">
-
-    <div>Pulse: <span id="pulse">–</span></div>
-    <div>Warp: <span id="warp">–</span></div>
-    <div>Drift: <span id="drift">–</span></div>
-    <div>Angle: <span id="angle">–</span></div>
-
-    <hr style="border:0;border-top:1px solid #333;margin:12px 0;">
-
-    <div>Mode: <span id="mode">–</span></div>
-    <div>Lock: <span id="lock">–</span></div>
-    <div>Stable: <span id="stable">–</span></div>
-</div>
-
-<canvas id="synth" width="900" height="600"></canvas>
+  <header><h1>QUANT — Triangle → Multiscale Analysis</h1></header>
+  <div id="controls">
+    <button id="btnLoad">Load Triangle</button>
+    <button id="btnAnalyze">Analyze</button>
+    <button id="btnExport">Export JSON</button>
+    <label>Preset:
+      <select id="tmpPreset"><option>calm</option><option>active</option><option>orbit</option><option>chaos</option></select>
+    </label>
+  </div>
+  <div id="out">
+    <div><strong>Mask 3×3</strong></div>
+    <pre id="mask3x3">—</pre>
+    <div style="margin-top:8px"><strong>Per‑Language arg/xarg/arg3te</strong></div>
+    <pre id="perlang">—</pre>
+    <div style="margin-top:8px"><strong>Multiscale Results (3,9,27)</strong></div>
+    <pre id="multiscale">—</pre>
+    <div style="margin-top:8px"><strong>Conservative Aggregation (2268)</strong></div>
+    <pre id="agg">—</pre>
+  </div>
 
 <script type="module">
-import { FORM_CORE } from "./FORM_CORE.js";
-import { FORM_MATRIX } from "./FORM_MATRIX.js";
-import { FORM_ENGINE } from "./FORM_ENGINE.js";
-import { SYN_CORE } from "./syn.js";
+let triangleModule = null;
 
-let matrix = FORM_MATRIX(FORM_CORE);
-let t = 0;
-
-const canvas = document.getElementById("synth");
-const ctx = canvas.getContext("2d");
-
-function LOOP(){
-    t += 0.01;
-
-    const form = FORM_ENGINE(matrix, t);
-
-    const mia = { fusion: 60 };
-    const echo = { resonance: 40, state: "loud" };
-
-    const syn = SYN_CORE(mia, echo, form);
-
-    document.getElementById("etage").innerText = syn.etage;
-    document.getElementById("modul").innerText = syn.modul;
-    document.getElementById("aufgabe").innerText = syn.aufgabe;
-
-    document.getElementById("pulse").innerText = syn.pulse.toFixed(3);
-    document.getElementById("warp").innerText = syn.warp.toFixed(3);
-    document.getElementById("drift").innerText = syn.drift.toFixed(3);
-    document.getElementById("angle").innerText = syn.angle.toFixed(1);
-
-    document.getElementById("mode").innerText = syn.mode;
-    document.getElementById("lock").innerText = syn.lock;
-    document.getElementById("stable").innerText = syn.stable;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (let i = 0; i < 180; i++) {
-        const fade = Math.sin(t + i * 0.02);
-        if (fade < 0.2) continue;
-
-        const x = 450 + Math.sin(t + i * 0.01) * (syn.pulse * 80);
-        const y = 300 + Math.cos(t + i * 0.01) * (syn.warp * 80);
-
-        ctx.fillStyle = `rgba(${syn.drift * 40}, 200, 255, ${fade})`;
-        ctx.beginPath();
-        ctx.arc(x, y, 3, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    requestAnimationFrame(LOOP);
+async function loadTriangleModule(){
+  try{ triangleModule = await import('./triangle.js'); console.info('triangle.js loaded'); }
+  catch(e){ console.warn('triangle.js failed to load', e); triangleModule = null; }
+  return triangleModule;
 }
 
-LOOP();
-</script>
+// sample triangle (same coords as SYN for parity)
+function sampleTriangleCoords(){
+  const w = window.innerWidth, h = window.innerHeight * 0.6;
+  return { p1:{x:w*0.3,y:h*0.35}, p2:{x:w*0.7,y:h*0.4}, p3:{x:w*0.5,y:h*0.75} };
+}
 
+// convert triangle to 3x3 mask by sampling barycentric or simple sectorization
+function triangleTo3x3Mask(tri){
+  // simple: compute centroid and for each of 3x3 cell compute density by random/proximity to triangle edges
+  // more robust: rasterize triangle onto 3x3 grid bounding box
+  const minX = Math.min(tri.p1.x,tri.p2.x,tri.p3.x);
+  const maxX = Math.max(tri.p1.x,tri.p2.x,tri.p3.x);
+  const minY = Math.min(tri.p1.y,tri.p2.y,tri.p3.y);
+  const maxY = Math.max(tri.p1.y,tri.p2.y,tri.p3.y);
+  const w = maxX - minX || 1, h = maxY - minY || 1;
+  // use simple distance to centroid density sampling
+  const cx = (tri.p1.x+tri.p2.x+tri.p3.x)/3, cy = (tri.p1.y+tri.p2.y+tri.p3.y)/3;
+  const cells = Array.from({length:3},()=>Array.from({length:3},()=>0));
+  for(let r=0;r<3;r++){
+    for(let c=0;c<3;c++){
+      const sx = minX + (c + 0.5) * (w/3);
+      const sy = minY + (r + 0.5) * (h/3);
+      const dx = sx - cx, dy = sy - cy;
+      // density as inverse distance normalized
+      const d = Math.sqrt(dx*dx+dy*dy);
+      cells[r][c] = Number((1 / (1 + d/(Math.max(w,h)/2))).toFixed(3));
+    }
+  }
+  // normalize to 0..1
+  let max = 0; for(let r=0;r<3;r++) for(let c=0;c<3;c++) max = Math.max(max, cells[r][c]);
+  if(max>0) for(let r=0;r<3;r++) for(let c=0;c<3;c++) cells[r][c] = Number((cells[r][c]/max).toFixed(3));
+  return cells;
+}
+
+// we reuse computePerLangFromMask & expandToLevel & aggregateMatrixStats from earlier; implement local copies
+const G = 3;
+function onesTile(base = G){ return Array.from({length:base},()=>Array.from({length:base},()=>1)); }
+function kroneckerExpand(smallMatrix, tileMatrix){
+  const out = [];
+  for(let i=0;i<smallMatrix.length;i++){
+    for(let ii=0; ii<tileMatrix.length; ii++){
+      const row = [];
+      for(let j=0;j<smallMatrix[0].length;j++){
+        for(let jj=0;jj<tileMatrix[0].length;jj++){
+          row.push(smallMatrix[i][j] * tileMatrix[ii][jj]);
+        }
+      }
+      out.push(row);
+    }
+  }
+  return out;
+}
+function expandToLevel(baseMatrix, levels=2, base=G){
+  let mat = baseMatrix;
+  for(let k=1;k<levels;k++){
+    mat = kroneckerExpand(mat, onesTile(base));
+  }
+  return mat;
+}
+function aggregateMatrixStats(mat){
+  let sum=0,cnt=0,max=-Infinity,min=Infinity;
+  for(let r=0;r<mat.length;r++) for(let c=0;c<mat[0].length;c++){
+    const v = Number(mat[r][c])||0; sum+=v; cnt++; if(v>max) max=v; if(v<min) min=v;
+  }
+  return { rows:mat.length, cols:mat[0].length, mean: cnt?sum/cnt:0, max, min, count:cnt };
+}
+
+const LANGS = ['DE','TR','EN','ES'];
+const TMP_PRESETS = { calm:{qiBias:0.6,iqqBias:0.3}, active:{qiBias:0.7,iqqBias:0.25}, orbit:{qiBias:0.65,iqqBias:0.35}, chaos:{qiBias:0.5,iqqBias:0.5} };
+function mean(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function clamp(v,min=0,max=1){ return Math.max(min, Math.min(max, v)); }
+
+function computePerLangFromMask(mask3x3, presetName, resps, qiBase, iqqBase){
+  const preset = TMP_PRESETS[presetName] || TMP_PRESETS.calm;
+  const qi = clamp(qiBase * 0.7 + preset.qiBias*0.3);
+  const iqq = clamp(iqqBase * 0.7 + preset.iqqBias*0.3);
+  const confs = resps.map(r=>r.conf);
+  const base = mean(confs);
+  const maxc = Math.max(...confs);
+  const minc = Math.min(...confs);
+  const variance = maxc - minc;
+  const combined = clamp(qi*base + (1 - iqq)*maxc);
+  const arg = Number(combined.toFixed(4));
+  const xarg = Number(variance.toFixed(4));
+  const arg3te = Number((combined * (1 - variance)).toFixed(4));
+  return { mask3x3, preset: presetName, qi, iqq, base, maxc, minc, variance, arg, xarg, arg3te };
+}
+
+function aggregateConservative(perLangResults){
+  const args = perLangResults.map(p=>p.arg);
+  const xargs = perLangResults.map(p=>p.xarg);
+  const arg3s = perLangResults.map(p=>p.arg3te);
+  const finalArg = Number(Math.min(...args).toFixed(4));
+  const finalXarg = Number(Math.max(...xargs).toFixed(4));
+  const finalArg3te = Number(Math.min(...arg3s).toFixed(4));
+  let rec = `Konservative Sorgfaltsbewertung:\n- arg: ${finalArg}\n- xarg: ${finalXarg}\n- arg3te: ${finalArg3te}\n`;
+  return { finalArg, finalXarg, finalArg3te, recommendation: rec };
+}
+
+// Analyze button
+document.getElementById('btnLoad').addEventListener('click', async ()=>{
+  await loadTriangleModule();
+  document.getElementById('mask3x3').textContent = 'Triangle loaded (ready).';
+});
+
+document.getElementById('btnAnalyze').addEventListener('click', ()=>{
+  const tri = triangleModule && triangleModule.makeTriangle ? triangleModule.makeTriangle(...(function(){
+    const s = sampleTriangleCoords(); return [s.p1,s.p2,s.p3];
+  })()) : sampleTriangleCoords();
+  const mask = triangleTo3x3Mask(tri);
+  document.getElementById('mask3x3').textContent = mask.map(r=>r.map(v=>v.toFixed(3)).join(' ')).join('\n');
+  const preset = document.getElementById('tmpPreset').value;
+  const resps = [{text:'r1',conf:0.7},{text:'r2',conf:0.5},{text:'r3',conf:0.3}];
+  const perLang = LANGS.map(l=> computePerLangFromMask(mask,preset,resps,0.65,0.35));
+  document.getElementById('perlang').textContent = perLang.map(p=>`${p.preset} ${p.arg} / ${p.xarg} / ${p.arg3te}`).join('\n');
+  // multiscale
+  const multiscale = [];
+  for(let L=1; L<=3; L++){
+    const mat = expandToLevel(mask, L, G);
+    const stats = aggregateMatrixStats(mat);
+    multiscale.push({ level:L, size:Math.pow(G,L), mean:stats.mean, tmp: (L<=1?'calm':L===2?'active':'orbit') });
+  }
+  document.getElementById('multiscale').textContent = JSON.stringify(multiscale, null, 2);
+  const agg = aggregateConservative(perLang);
+  document.getElementById('agg').textContent = JSON.stringify(agg, null, 2);
+  // save last
+  window.lastQuant = { tri, mask, perLang, multiscale, agg, timestamp: new Date().toISOString() };
+});
+
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const data = window.lastQuant || { info:'no run yet' };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='quant-triangle-analysis.json'; a.click(); URL.revokeObjectURL(url);
+});
+
+// initial load
+loadTriangleModule();
+</script>
 </body>
 </html>
