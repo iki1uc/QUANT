@@ -1,21 +1,29 @@
-# ALL · Master-Sortierer · iki1uc
+# QUANT — SYN‑Analyse‑Engine
 
-ALL ist die Oberstation des iki1uc-Systems.
-Sie erzeugt die QI/IQQ-Master-Matrix und sortiert alle RESPO-Module
-zu einer funktionalen Einheit.
+QUANT ist ein leichtes Analyse‑Modul, das SYN‑Daten auswertet und
+Form‑Informationen sichtbar macht.
 
-──────────────────────────────────────────────
-## Funktionen
+## Struktur
 
-- QI-Schaltung (Index)
-- IQQ-Schaltung (3-Zustände)
-- 9×9 Master-Matrix
-- Vorsortierung aller RESPO-Module
-- Einheitliche Basis für CUBE-MIND, META-CORE, 81×81
+Frontend:
+- `ID.html` — Identitätsanzeige
+- `index.html` — SYN‑Canvas + QUANT‑Analyse
+- `README.md` — Projektbeschreibung
 
-──────────────────────────────────────────────
-## Dateien
+Backend (aus Repo geladen):
+- `FORM_CORE.js`
+- `FORM_MATRIX.js`
+- `FORM_ENGINE.js`
+- `syn.js`
+- `vector.js`
+- `opta.js`
 
-- ALL.core.js – Masterengine
-- id.html – ALL-Stempel
-- index.html – ALL-Matrix + Sortierung
+## Funktion
+
+1. FORM erzeugt Etage / Modul / Aufgabe.
+2. SYN erzeugt Pulse / Warp / Drift / Angle.
+3. QUANT analysiert SYN und zeigt Werte im UI.
+
+## Start
+
+Einfach `index.html` im Browser öffnen.
