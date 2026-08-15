@@ -1,37 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>GEO‑3D‑ASCII · RUN8 · iki1uc</title>
+<title>QUANT — Final SYN Engine</title>
+
 <style>
-body { background:#000; color:#0f0; font-family:Consolas; padding:20px; }
-pre { font-size:16px; line-height:18px; }
+    body {
+        margin: 0;
+        padding: 0;
+        background: #0a0a0a;
+        color: #e0e0e0;
+        font-family: Consolas, monospace;
+    }
+
+    header {
+        padding: 20px;
+        text-align: center;
+        background: #111;
+        border-bottom: 2px solid #222;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 26px;
+        color: #6cf;
+        letter-spacing: 2px;
+    }
+
+    .panel {
+        width: 420px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #111;
+        border: 1px solid #333;
+        border-radius: 6px;
+    }
+
+    .panel-title {
+        font-size: 18px;
+        color: #6cf;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .panel div {
+        margin: 6px 0;
+        font-size: 15px;
+    }
+
+    canvas {
+        display: block;
+        margin: 30px auto;
+        background: #000;
+        border: 1px solid #333;
+        border-radius: 6px;
+    }
 </style>
 </head>
+
 <body>
 
-<h2>GEO‑3D‑ASCII · RUN8</h2>
-<pre id="geo">START…</pre>
+<header>
+    <h1>QUANT — Final SYN Engine</h1>
+</header>
 
-<script>
-let f = 0;
+<div class="panel">
+    <div class="panel-title">Form‑Etage</div>
+    <div>Etage: <span id="etage">–</span></div>
+    <div>Modul: <span id="modul">–</span></div>
+    <div>Aufgabe: <span id="aufgabe">–</span></div>
 
-function anim(){
-    f++;
+    <hr style="border:0;border-top:1px solid #333;margin:12px 0;">
 
-    // 3D‑Rotation simuliert durch wechselnde Tiefe
-    const depth = ["●","○","·","∙","•"];
-    const d = (i)=> depth[(f+i)%depth.length];
+    <div>Pulse: <span id="pulse">–</span></div>
+    <div>Warp: <span id="warp">–</span></div>
+    <div>Drift: <span id="drift">–</span></div>
+    <div>Angle: <span id="angle">–</span></div>
 
-    // Anime‑Glow simuliert durch Funken
-    const glow = (f%2 ? "✦" : "✧");
+    <hr style="border:0;border-top:1px solid #333;margin:12px 0;">
 
-    // Amiga‑Raster simuliert durch horizontale Balken
-    const raster = (f%3 ? "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓" : "██████████████████");
+    <div>Mode: <span id="mode">–</span></div>
+    <div>Lock: <span id="lock">–</span></div>
+    <div>Stable: <span id="stable">–</span></div>
+</div>
 
-    const geo = `
-GEO‑3D‑ROTATION (frame ${f})
+<canvas id="synth" width="900" height="600"></canvas>
 
-X‑Axis  ─── ${d(1)} ${d(2)} ${d(3)}
-Y‑Axis  ─── ${d(2)} ${d(3)} ${d(4)}
-Z‑
+<script type="module">
+import { FORM_CORE } from "./FORM_CORE.js";
+import { FORM_MATRIX } from "./FORM_MATRIX.js";
+import { FORM_ENGINE } from "./FORM_ENGINE.js";
+import { SYN_CORE } from "./syn.js";
+
+let matrix = FORM_MATRIX(FORM_CORE);
+let t = 0;
+
+const canvas = document.getElementById("synth");
+const ctx = canvas.getContext("2d");
+
+function LOOP(){
+    t += 0.01;
+
+    const form = FORM_ENGINE(matrix, t);
+
+    const mia = { fusion: 60 };
+    const echo = { resonance: 40, state: "loud" };
+
+    const syn = SYN_CORE(mia, echo, form);
+
+    document.getElementById("etage").innerText = syn.etage;
+    document.getElementById("modul").innerText = syn.modul;
+    document.getElementById("aufgabe").innerText = syn.aufgabe;
+
+    document.getElementById("pulse").innerText = syn.pulse.toFixed(3);
+    document.getElementById("warp").innerText = syn.warp.toFixed(3);
+    document.getElementById("drift").innerText = syn.drift.toFixed(3);
+    document.getElementById("angle").innerText = syn.angle.toFixed(1);
+
+    document.getElementById("mode").innerText = syn.mode;
+    document.getElementById("lock").innerText = syn.lock;
+    document.getElementById("stable").innerText = syn.stable;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < 180; i++) {
+        const fade = Math.sin(t + i * 0.02);
+        if (fade < 0.2) continue;
+
+        const x = 450 + Math.sin(t + i * 0.01) * (syn.pulse * 80);
+        const y = 300 + Math.cos(t + i * 0.01) * (syn.warp * 80);
+
+        ctx.fillStyle = `rgba(${syn.drift * 40}, 200, 255, ${fade})`;
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    requestAnimationFrame(LOOP);
+}
+
+LOOP();
+</script>
+
+</body>
+</html>
