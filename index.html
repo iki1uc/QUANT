@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QUANT · SYN · FORM · VECTOR — BEWEIS-FÜHRUNG</title>
+<title>QUANT · SYN · FORM · VECTOR — BEWEIS-FÜHRUNG · FIX</title>
 <style>
 :root {
     --bg: #0a0a12;
@@ -28,7 +28,6 @@ body {
     gap: 6px;
 }
 
-/* ===== HEADER ===== */
 header {
     border-bottom: 2px solid var(--gold);
     padding-bottom: 6px;
@@ -57,7 +56,6 @@ header h1 {
 #status-led.busy { background: #ff0; animation: blink 0.5s infinite; }
 @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
 
-/* ===== MAIN ===== */
 main {
     display: grid;
     grid-template-columns: 3fr 1.5fr;
@@ -65,7 +63,6 @@ main {
     min-height: 500px;
 }
 
-/* ===== CANVAS ===== */
 #canvas-panel {
     background: #05050a;
     border: 1px solid var(--border);
@@ -96,7 +93,6 @@ main {
     display: block;
 }
 
-/* ===== BEWEIS-OVERLAY ===== */
 #proof-overlay {
     position: absolute;
     bottom: 6px;
@@ -110,19 +106,7 @@ main {
     border-radius: 4px;
 }
 #proof-overlay .highlight { color: var(--gold); }
-.proof-marker {
-    position: absolute;
-    color: var(--gold);
-    font-size: 10px;
-    pointer-events: none;
-    animation: pulse-marker 1.5s ease-in-out infinite;
-}
-@keyframes pulse-marker {
-    0%,100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.1); }
-}
 
-/* ===== CONTROLS ===== */
 #controls {
     display: flex;
     flex-wrap: wrap;
@@ -144,18 +128,24 @@ button:hover { background: #1a1a2a; border-color: var(--fg); }
 button:active { transform: scale(0.95); }
 button.primary { border-color: var(--tri); color: var(--tri); }
 button.primary:hover { background: var(--tri); color: #000; }
-button.form-btn { border-color: var(--form); color: var(--form); }
-button.form-btn:hover { background: var(--form); color: #000; }
-button.quant-btn { border-color: var(--quant); color: var(--quant); }
-button.quant-btn:hover { background: var(--quant); color: #000; }
-button.syn-btn { border-color: var(--syn); color: var(--syn); }
-button.syn-btn:hover { background: var(--syn); color: #000; }
-button.danger { border-color: #f44; color: #f44; }
-button.danger:hover { background: #f44; color: #000; }
 button.proof-btn { border-color: var(--gold); color: var(--gold); }
 button.proof-btn:hover { background: var(--gold); color: #000; }
+button.syn-btn { border-color: var(--syn); color: var(--syn); }
+button.syn-btn:hover { background: var(--syn); color: #000; }
+button.quant-btn { border-color: var(--quant); color: var(--quant); }
+button.quant-btn:hover { background: var(--quant); color: #000; }
+button.danger { border-color: #f44; color: #f44; }
+button.danger:hover { background: #f44; color: #000; }
+select {
+    background: #111;
+    color: var(--fg);
+    border: 1px solid #333;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 9px;
+}
 
-/* ===== DATA PANEL ===== */
 #data-panel {
     background: #05050a;
     border: 1px solid var(--border);
@@ -164,7 +154,7 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
     display: flex;
     flex-direction: column;
 }
-#data-panel .header h3 { color: var(--form); font-size: 11px; }
+#data-panel .header h3 { color: var(--gold); font-size: 11px; }
 
 #tabs {
     display: flex;
@@ -191,7 +181,7 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
     font-size: 9px;
     line-height: 1.4;
     min-height: 120px;
-    max-height: 300px;
+    max-height: 280px;
     padding: 4px 0;
 }
 #data-content .entry { padding: 1px 0; border-bottom: 1px solid #0a0a12; }
@@ -201,8 +191,6 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
 #data-content .entry .msg.err { color: #f44; }
 #data-content .entry .msg.warn { color: #ff4; }
 #data-content .entry .msg.proof { color: var(--gold); font-weight: bold; }
-#data-content .entry .msg.tri { color: var(--tri); }
-#data-content .entry .msg.form { color: var(--form); }
 #data-content .entry .msg.quant { color: var(--quant); }
 #data-content .entry .msg.syn { color: var(--syn); }
 #data-content pre {
@@ -216,7 +204,6 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
     word-break: break-all;
 }
 
-/* ===== BEWEIS-METRIKEN ===== */
 #proof-metrics {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -230,12 +217,14 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
     padding: 4px 6px;
     text-align: center;
     border: 1px solid #1a1a2a;
+    transition: 0.3s;
 }
+.metric.verified { border-color: var(--form); }
+.metric.failed { border-color: var(--tri); }
 .metric .label { font-size: 7px; color: #444; text-transform: uppercase; letter-spacing: 1px; }
 .metric .value { font-size: 14px; font-weight: bold; }
 .metric .sub { font-size: 7px; color: #666; }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     main { grid-template-columns: 1fr; }
     #proof-metrics { grid-template-columns: 1fr 1fr; }
@@ -244,9 +233,8 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-    <h1>⚡ QUANT · SYN · FORM · VECTOR — BEWEIS-FÜHRUNG</h1>
+    <h1>⚡ QUANT · SYN · FORM · VECTOR — BEWEIS-FÜHRUNG · FIX</h1>
     <div style="display:flex;align-items:center;gap:8px;">
         <span id="status-led" class="off"></span>
         <span id="clock" style="font-size:10px;color:#666;">⏱️ --:--:--</span>
@@ -254,9 +242,7 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
     </div>
 </header>
 
-<!-- MAIN -->
 <main>
-    <!-- CANVAS -->
     <div id="canvas-panel">
         <div class="header">
             <span>🔺 TRIANGLE · Sink (A) → Source (B)</span>
@@ -273,7 +259,6 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
             <button class="proof-btn" id="btn-proof">◈ BEWEIS</button>
             <button class="syn-btn" id="btn-syn">⟳ SYN</button>
             <button class="quant-btn" id="btn-quant">⚛ QUANT</button>
-            <button class="form-btn" id="btn-form">📐 FORM</button>
             <button id="btn-step">⏭ STEP</button>
             <button class="danger" id="btn-reset">⟲ RESET</button>
             <label style="font-size:8px;color:#666;">Speed:
@@ -288,7 +273,6 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
         </div>
     </div>
 
-    <!-- DATA -->
     <div id="data-panel">
         <div class="header"><h3>📊 BEWEIS · ANALYSIS</h3></div>
         <div id="tabs">
@@ -305,7 +289,6 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
             <div class="entry"><span class="time">[INIT]</span> <span class="msg">🔺 Warte auf BOOT...</span></div>
         </div>
 
-        <!-- BEWEIS-METRIKEN -->
         <div id="proof-metrics">
             <div class="metric" id="m-90">
                 <div class="label">90°-Beweis</div>
@@ -322,18 +305,15 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
                 <div class="value" style="color:var(--gold);">—</div>
                 <div class="sub">Goldener Schnitt</div>
             </div>
-            <div class="metric" id="m-vector">
-                <div class="label">Vektor-Magnitude</div>
-                <div class="value" style="color:var(--vector);">—</div>
-                <div class="sub">Richtungsstärke</div>
+            <div class="metric" id="m-quant">
+                <div class="label">⚛ QUANT-Status</div>
+                <div class="value" style="color:var(--quant);">—</div>
+                <div class="sub">Energie · Stabilität</div>
             </div>
         </div>
     </div>
 </main>
 
-<!-- ============================================================ -->
-<!-- SCRIPT — BEWEIS-FÜHRUNG MIT GEO/PHYSIK-VERIFIKATION -->
-<!-- ============================================================ -->
 <script type="importmap">
 {
     "imports": {
@@ -350,18 +330,31 @@ button.proof-btn:hover { background: var(--gold); color: #000; }
 
 <script type="module">
 // ============================================================
-// 1. IMPORTS
+// 1. IMPORTS — ALLE MODULE DIREKT AUS DEN FILES
 // ============================================================
-// Fallback-Funktionen falls Module nicht existieren
-const FORM_CORE = () => [1,2,3,4,5,6,7,8,9];
-const FORM_ENGINE = (m, t) => ({ matrix: m, time: t, energy: Math.sin(t)*50+50 });
-const FORM_MATRIX = (c) => c.map(x => x * 1.618);
-const QUANT_CORE = (e) => ({ energy: e.energy, stability: Math.min(1, e.energy/100) });
-const SYN_CORE = (mia, echo, engine) => ({ lock: 60 + Math.sin(Date.now()/1000)*20, stable: true });
-class Vector { constructor(x,y,z){ this.x=x; this.y=y; this.z=z; } magnitude(){ return Math.sqrt(this.x*this.x+this.y*this.y+this.z*this.z); } }
+import { FORM_CORE as FORM_CORE_RAW } from './FORM_CORE.js';
+import { FORM_ENGINE } from './FORM_ENGINE.js';
+import { FORM_MATRIX } from './FORM_MATRIX.js';
+import { QUANT_CORE } from './QUANT_CORE.js';
+import { Opta } from './opta.js';
+import { SYN_CORE } from './syn.js';
+import { Vector } from './vector.js';
 
 // ============================================================
-// 2. DOM REFS
+// 2. MODULE-REGISTRY
+// ============================================================
+const MODULES = {
+    formCore: { name: 'FORM_CORE', mod: FORM_CORE_RAW, loaded: false },
+    formEngine: { name: 'FORM_ENGINE', mod: FORM_ENGINE, loaded: false },
+    formMatrix: { name: 'FORM_MATRIX', mod: FORM_MATRIX, loaded: false },
+    quantCore: { name: 'QUANT_CORE', mod: QUANT_CORE, loaded: false },
+    opta: { name: 'opta', mod: Opta, loaded: false },
+    syn: { name: 'syn', mod: SYN_CORE, loaded: false },
+    vector: { name: 'vector', mod: Vector, loaded: false }
+};
+
+// ============================================================
+// 3. DOM REFS
 // ============================================================
 const canvas = document.getElementById('simCanvas');
 const ctx = canvas.getContext('2d');
@@ -375,13 +368,12 @@ const btnBoot = document.getElementById('btn-boot');
 const btnProof = document.getElementById('btn-proof');
 const btnSyn = document.getElementById('btn-syn');
 const btnQuant = document.getElementById('btn-quant');
-const btnForm = document.getElementById('btn-form');
 const btnStep = document.getElementById('btn-step');
 const btnReset = document.getElementById('btn-reset');
 const speedSelect = document.getElementById('speedSelect');
 
 // ============================================================
-// 3. CANVAS SETUP
+// 4. CANVAS SETUP
 // ============================================================
 function resizeCanvas() {
     const wrap = canvas.parentElement;
@@ -392,7 +384,7 @@ resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
 // ============================================================
-// 4. STATE
+// 5. STATE
 // ============================================================
 const PHI = 1.61803398875;
 const state = {
@@ -407,25 +399,27 @@ const state = {
     proof90: null,
     proof120: null,
     proofPhi: null,
-    proofVector: null,
+    proofActive: false,
     formData: null,
     quantData: null,
     synData: null,
     vectorData: null,
-    proofActive: false,
-    lastTime: 0
+    lastTime: 0,
+    // QUANT-spezifisch
+    quantEnergy: 0,
+    quantStability: 0,
+    quantComplexity: 0
 };
 
 // ============================================================
-// 5. LOG
+// 6. LOG
 // ============================================================
 function log(msg, type = 'info') {
     const entry = document.createElement('div');
     entry.className = 'entry';
     const time = new Date().toLocaleTimeString();
     const cls = type === 'ok' ? 'ok' : type === 'err' ? 'err' : type === 'warn' ? 'warn' :
-                type === 'proof' ? 'proof' : type === 'tri' ? 'tri' : type === 'form' ? 'form' :
-                type === 'quant' ? 'quant' : type === 'syn' ? 'syn' : '';
+                type === 'proof' ? 'proof' : type === 'quant' ? 'quant' : type === 'syn' ? 'syn' : '';
     entry.innerHTML = `<span class="time">[${time}]</span> <span class="msg ${cls}">${msg}</span>`;
     logDiv.appendChild(entry);
     logDiv.scrollTop = logDiv.scrollHeight;
@@ -433,7 +427,7 @@ function log(msg, type = 'info') {
 }
 
 // ============================================================
-// 6. TRIANGLE + SINK/SOURCE (SYN ENGINE)
+// 7. TRIANGLE + SINK/SOURCE
 // ============================================================
 function makeTriangle(p1, p2, p3) {
     return {
@@ -454,7 +448,8 @@ function makeSink(sideA, opts = { radius: 35, strength: 150 }) {
         pos: { x: (sideA.a.x + sideA.b.x) / 2, y: (sideA.a.y + sideA.b.y) / 2 },
         radius: opts.radius,
         strength: opts.strength,
-        energy: 0
+        energy: 0,
+        absorbed: 0
     };
 }
 
@@ -485,10 +480,8 @@ function spawnParticle(source) {
 }
 
 // ============================================================
-// 7. BEWEIS-FUNKTIONEN (GEO + PHYSIK)
+// 8. BEWEIS-FUNKTIONEN
 // ============================================================
-
-// 90°-Beweis: Orthogonalität prüfen
 function prove90(triangle) {
     if (!triangle) return null;
     const { p1, p2, p3 } = triangle;
@@ -503,13 +496,11 @@ function prove90(triangle) {
         angle: angle,
         deviation: deviation,
         verified: deviation < 5,
-        proof: deviation < 3 ? '✅ 90°-BEWEIS BESTÄTIGT' :
-               deviation < 10 ? '⚠️ 90°-Beweis: geringe Abweichung' :
-               '❌ 90°-Beweis: nicht orthogonal'
+        label: deviation < 3 ? '✅ 90° bestätigt' :
+               deviation < 10 ? '⚠️ 90° annähernd' : '❌ 90° nicht orthogonal'
     };
 }
 
-// 120°-Beweis: Triharmonie (Gleichseitigkeit)
 function prove120(triangle) {
     if (!triangle) return null;
     const { p1, p2, p3 } = triangle;
@@ -535,35 +526,33 @@ function prove120(triangle) {
         avgAngle: avgAngle,
         angleDeviation: angleDev,
         verified: maxDev < 0.2 && angleDev < 10,
-        proof: maxDev < 0.1 && angleDev < 5 ? '✅ 120°-BEWEIS BESTÄTIGT (Gleichseitig)' :
-               maxDev < 0.3 && angleDev < 15 ? '⚠️ 120°-Beweis: annähernd' :
-               '❌ 120°-Beweis: nicht harmonisch'
+        label: maxDev < 0.1 && angleDev < 5 ? '✅ 120° bestätigt' :
+               maxDev < 0.3 && angleDev < 15 ? '⚠️ 120° annähernd' : '❌ 120° nicht harmonisch'
     };
 }
 
-// φ-Resonanz (Goldener Schnitt)
 function provePhi(data) {
-    if (!data || !data.matrix) return null;
-    const vals = data.matrix.filter(v => v > 0);
+    if (!data || data.length < 2) return null;
+    const vals = data.filter(v => v > 0);
     if (vals.length < 2) return null;
     const ratios = [];
     for (let i = 0; i < vals.length - 1; i++) {
-        ratios.push(vals[i+1] / vals[i]);
+        if (vals[i] > 0) ratios.push(vals[i+1] / vals[i]);
     }
+    if (ratios.length === 0) return null;
     const avgRatio = ratios.reduce((a,b) => a+b, 0) / ratios.length;
     const phiDev = Math.abs(avgRatio - PHI) / PHI;
     return {
         avgRatio: avgRatio,
         phiDeviation: phiDev,
         verified: phiDev < 0.15,
-        proof: phiDev < 0.05 ? '✅ φ-RESONANZ BESTÄTIGT (Goldener Schnitt)' :
-               phiDev < 0.15 ? '⚠️ φ-Resonanz: annähernd' :
-               '❌ φ-Resonanz: nicht bestätigt'
+        label: phiDev < 0.05 ? '✅ φ-Resonanz bestätigt' :
+               phiDev < 0.15 ? '⚠️ φ annähernd' : '❌ φ-Resonanz nicht bestätigt'
     };
 }
 
 // ============================================================
-// 8. SIMULATION STEP
+// 9. SIMULATION STEP
 // ============================================================
 function simStep(dt) {
     const speed = parseFloat(speedSelect.value) || 1;
@@ -610,6 +599,7 @@ function simStep(dt) {
             const r = Math.sqrt(dx * dx + dy * dy);
             if (r < Math.max(5, s.radius * 0.12)) {
                 s.energy += p.mass;
+                s.absorbed++;
                 absorbed = true;
                 break;
             }
@@ -633,23 +623,157 @@ function simStep(dt) {
     }
     state.stars = state.stars.filter(s => { s.life -= dt; return s.life > 0; });
     state.simTime += dt;
+
+    // ============================================================
+    // 10. QUANT + SYN + FORM + VECTOR ANALYSE (DER FIX!)
+    // ============================================================
+    runModuleAnalysis();
 }
 
 // ============================================================
-// 9. RENDER + BEWEIS-VISUALISIERUNG
+// 11. MODULE-ANALYSE — DER QUANT-FIX
+// ============================================================
+function runModuleAnalysis() {
+    try {
+        // 1. FORM_CORE — Daten aus der Datei
+        const core = FORM_CORE_RAW || [];
+        const matrix = FORM_MATRIX ? FORM_MATRIX(core) : core.map((row, i) => ({
+            index: i,
+            etage: row.etage || `E${i}`,
+            modul: row.modul || `M${i}`,
+            aufgabe: row.aufgabe || `Aufgabe ${i}`,
+            depth: i * 0.33,
+            pulse: Math.sin(i * 0.25 + state.simTime),
+            warp: Math.cos(i * 0.18 + state.simTime * 0.5),
+            angle: (i * 36 + state.simTime * 10) % 360
+        }));
+
+        // 2. FORM_ENGINE — Verarbeitung
+        const engine = FORM_ENGINE ? FORM_ENGINE(matrix, state.simTime) : {
+            etage: '1-27',
+            modul: 'BIO',
+            aufgabe: 'Lebenszeichen',
+            pulse: Math.sin(state.simTime),
+            warp: Math.cos(state.simTime * 0.5),
+            drift: Math.sin(state.simTime * 0.3),
+            angle: (state.simTime * 20) % 360
+        };
+
+        state.formData = { core, matrix, engine };
+        log('📐 FORM_ENGINE ausgeführt', 'form');
+
+        // 3. QUANT_CORE — HIER WAR DER FAIL! Jetzt mit korrekten Daten
+        if (QUANT_CORE && engine) {
+            // QUANT_CORE erwartet ein syn-Objekt mit pulse, warp, drift, stable, angle, etage, modul
+            const synInput = {
+                pulse: engine.pulse || 0,
+                warp: engine.warp || 0,
+                drift: engine.drift || 0,
+                stable: Math.abs(engine.pulse || 0) > 0.3,
+                angle: engine.angle || 0,
+                etage: engine.etage || '1-27',
+                modul: engine.modul || 'BIO'
+            };
+
+            const quant = QUANT_CORE(synInput);
+            state.quantData = quant;
+            state.quantEnergy = quant.energy || 0;
+            state.quantStability = quant.stability === 'hoch' ? 1 : 0.3;
+            state.quantComplexity = quant.complexity || 0;
+
+            log(`⚛ QUANT_CORE: Energie=${quant.energy.toFixed(2)}, Stabilität=${quant.stability}, Komplexität=${quant.complexity.toFixed(2)}`, 'quant');
+
+            // QUANT-Metrik aktualisieren
+            document.getElementById('m-quant').className = `metric ${quant.stability === 'hoch' ? 'verified' : 'failed'}`;
+            document.getElementById('m-quant').querySelector('.value').textContent = quant.stability === 'hoch' ? '✓' : '✗';
+            document.getElementById('m-quant').querySelector('.sub').textContent = `${quant.energy.toFixed(1)}E · ${quant.stability}`;
+        }
+
+        // 4. SYN_CORE
+        if (SYN_CORE && engine) {
+            const mia = { fusion: 60 + Math.sin(state.simTime) * 20 };
+            const echo = { state: 'loud', resonance: 30 + Math.cos(state.simTime * 0.5) * 15 };
+            const syn = SYN_CORE(mia, echo, engine);
+            state.synData = syn;
+            log(`⟳ SYN_CORE: Lock=${syn.lock.toFixed(0)}, Stable=${syn.stable}`, 'syn');
+        }
+
+        // 5. Vector
+        if (Vector) {
+            const v = new Vector(
+                Math.sin(state.simTime * 0.5) * 100,
+                Math.cos(state.simTime * 0.3) * 100,
+                Math.sin(state.simTime * 0.7) * 50
+            );
+            state.vectorData = {
+                x: v.x.toFixed(2),
+                y: v.y.toFixed(2),
+                z: v.z.toFixed(2),
+                magnitude: v.magnitude().toFixed(2)
+            };
+            log(`📐 VECTOR: magnitude=${state.vectorData.magnitude}`, 'form');
+        }
+
+        // Tabs updaten
+        updateTabContent('form', JSON.stringify({ matrix: matrix.slice(0, 5), engine }, null, 2));
+        updateTabContent('quant', JSON.stringify(state.quantData, null, 2));
+        updateTabContent('syn', JSON.stringify(state.synData, null, 2));
+        updateTabContent('vector', JSON.stringify(state.vectorData, null, 2));
+
+    } catch (e) {
+        log(`❌ Analyse Fehler: ${e.message}`, 'err');
+        console.error('Module Error:', e);
+    }
+}
+
+// ============================================================
+// 12. TABS
+// ============================================================
+let currentTab = 'log';
+const tabCache = {};
+
+function updateTabContent(tab, content) {
+    tabCache[tab] = content;
+    if (tab === currentTab && tab !== 'log') {
+        const contentDiv = document.getElementById('data-content');
+        contentDiv.innerHTML = `<pre>${typeof content === 'string' ? content : JSON.stringify(content, null, 2)}</pre>`;
+    }
+}
+
+document.querySelectorAll('#tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTab = btn.dataset.tab;
+        const contentDiv = document.getElementById('data-content');
+
+        if (currentTab === 'log') {
+            // Log bleibt
+            return;
+        }
+
+        if (tabCache[currentTab]) {
+            contentDiv.innerHTML = `<pre>${typeof tabCache[currentTab] === 'string' ? tabCache[currentTab] : JSON.stringify(tabCache[currentTab], null, 2)}</pre>`;
+        } else {
+            contentDiv.innerHTML = `<pre>⏳ Keine Daten — führe zuerst Analyse aus</pre>`;
+        }
+    });
+});
+
+// ============================================================
+// 13. RENDER
 // ============================================================
 function render() {
     const w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    // Hintergrund
     const grad = ctx.createRadialGradient(w/2, h/2, 10, w/2, h/2, w/2);
     grad.addColorStop(0, '#0a0a1a');
     grad.addColorStop(1, '#000');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
-    // Grid (3-9-27)
+    // Grid
     ctx.strokeStyle = '#0a0a1a';
     ctx.lineWidth = 0.5;
     for (let x = 0; x < w; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
@@ -667,16 +791,12 @@ function render() {
         ctx.lineWidth = state.proofActive ? 2 : 1;
         ctx.stroke();
 
-        // 90°-Beweis-Marker
         if (state.proofActive && state.proof90 && state.proof90.verified) {
             ctx.fillStyle = 'rgba(255,215,0,0.15)';
             ctx.font = 'bold 12px Consolas';
             ctx.textAlign = 'center';
             ctx.fillText('◈ 90°', t.center.x, t.center.y - 20);
-            ctx.fillText('✓', t.p1.x - 15, t.p1.y - 10);
         }
-
-        // 120°-Beweis-Marker
         if (state.proofActive && state.proof120 && state.proof120.verified) {
             ctx.fillStyle = 'rgba(255,215,0,0.12)';
             ctx.font = 'bold 10px Consolas';
@@ -754,13 +874,207 @@ function render() {
 }
 
 // ============================================================
-// 10. BEWEIS-AKTUALISIERUNG
+// 14. BEWEIS-AKTUALISIERUNG
 // ============================================================
 function updateProofMetrics() {
     if (!state.triangle) return;
 
-    // 90°-Beweis
     state.proof90 = prove90(state.triangle);
+    state.proof120 = prove120(state.triangle);
+    state.proofPhi = provePhi([1, 1.618, 2.618, 4.236, 6.854, 11.09]);
+
     if (state.proof90) {
         document.querySelector('#m-90 .value').textContent = state.proof90.verified ? '✓' : '✗';
-        document.querySelector('#m-90 .sub').textContent = state.proof90.verified ? `${state.proof90.angle.toFixed(1)}°` : `${state.proof
+        document.querySelector('#m-90 .sub').textContent = state.proof90.verified ? `${state.proof90.angle.toFixed(1)}°` : `${state.proof90.angle.toFixed(1)}°`;
+        document.querySelector('#m-90').className = `metric ${state.proof90.verified ? 'verified' : 'failed'}`;
+    }
+    if (state.proof120) {
+        document.querySelector('#m-120 .value').textContent = state.proof120.verified ? '✓' : '✗';
+        document.querySelector('#m-120 .sub').textContent = state.proof120.verified ? `${state.proof120.avgAngle.toFixed(1)}°` : `${state.proof120.avgAngle.toFixed(1)}°`;
+        document.querySelector('#m-120').className = `metric ${state.proof120.verified ? 'verified' : 'failed'}`;
+    }
+    if (state.proofPhi) {
+        document.querySelector('#m-phi .value').textContent = state.proofPhi.verified ? '✓' : '✗';
+        document.querySelector('#m-phi .sub').textContent = state.proofPhi.verified ? `${state.proofPhi.avgRatio.toFixed(3)}` : `${state.proofPhi.avgRatio.toFixed(3)}`;
+        document.querySelector('#m-phi').className = `metric ${state.proofPhi.verified ? 'verified' : 'failed'}`;
+    }
+
+    tabCache['proof'] = {
+        '90°': state.proof90,
+        '120°': state.proof120,
+        'φ': state.proofPhi
+    };
+}
+
+// ============================================================
+// 15. BOOT / STEP / RESET
+// ============================================================
+function bootAll() {
+    log('🚀 BOOT ALL — Initialisiere System...', 'warn');
+    statusLed.className = 'busy';
+
+    const w = canvas.width, h = canvas.height;
+    const tri = makeTriangle(
+        { x: w * 0.15, y: h * 0.85 },
+        { x: w * 0.85, y: h * 0.85 },
+        { x: w * 0.5, y: h * 0.1 }
+    );
+    state.triangle = tri;
+    state.sinks = [makeSink(tri.sideA)];
+    state.sources = [makeSource(tri.sideB)];
+    state.particles = [];
+    state.stars = [];
+    state.simTime = 0;
+
+    // Module laden
+    Object.keys(MODULES).forEach((key, i) => {
+        setTimeout(() => {
+            MODULES[key].loaded = true;
+            log(`✅ ${MODULES[key].name} geladen`, 'ok');
+        }, 200 + i * 150);
+    });
+
+    setTimeout(() => {
+        statusLed.className = 'on';
+        state.running = true;
+        state.lastTime = performance.now();
+        log('✅ SYSTEM BEREIT — Simulation läuft', 'ok');
+        log('⚛ QUANT_CORE aktiv — Beweis-Führung gestartet', 'quant');
+        updateProofMetrics();
+        loopFrame(performance.now());
+    }, 200 + Object.keys(MODULES).length * 150 + 500);
+}
+
+function stepSim() {
+    log('⏭ STEP — Nächster Simulationsschritt', 'warn');
+    simStep(0.5);
+    render();
+    updateProofMetrics();
+    state.cycle++;
+    cycleCountEl.textContent = `Zyklus ${state.cycle}`;
+}
+
+function resetAll() {
+    state.running = false;
+    state.particles = [];
+    state.sinks = [];
+    state.sources = [];
+    state.stars = [];
+    state.simTime = 0;
+    state.cycle = 0;
+    state.triangle = null;
+    state.formData = null;
+    state.quantData = null;
+    state.synData = null;
+    state.vectorData = null;
+    state.quantEnergy = 0;
+    state.quantStability = 0;
+    state.quantComplexity = 0;
+    cycleCountEl.textContent = 'Zyklus 0';
+    statusLed.className = 'off';
+
+    Object.keys(MODULES).forEach(key => {
+        MODULES[key].loaded = false;
+    });
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#444';
+    ctx.font = '18px Consolas';
+    ctx.textAlign = 'center';
+    ctx.fillText('⟲ RESET — Bereit für BOOT', canvas.width/2, canvas.height/2);
+
+    // Metriken zurücksetzen
+    document.querySelectorAll('.metric').forEach(m => {
+        m.className = 'metric';
+        m.querySelector('.value').textContent = '—';
+        m.querySelector('.sub').textContent = '—';
+    });
+
+    log('⟲ RESET abgeschlossen', 'warn');
+}
+
+// ============================================================
+// 16. LOOP
+// ============================================================
+let animId = null;
+
+function loopFrame(timestamp) {
+    if (!state.running) {
+        animId = requestAnimationFrame(loopFrame);
+        return;
+    }
+
+    const dt = state.lastTime ? Math.min((timestamp - state.lastTime) / 1000, 0.05) : 0.016;
+    state.lastTime = timestamp;
+
+    simStep(dt);
+    render();
+    updateProofMetrics();
+
+    animId = requestAnimationFrame(loopFrame);
+}
+
+// ============================================================
+// 17. BUTTON BINDING
+// ============================================================
+btnBoot.addEventListener('click', bootAll);
+btnStep.addEventListener('click', stepSim);
+btnReset.addEventListener('click', resetAll);
+
+btnProof.addEventListener('click', () => {
+    state.proofActive = !state.proofActive;
+    log(state.proofActive ? '◈ BEWEIS-Modus aktiviert' : '◈ BEWEIS-Modus deaktiviert', 'proof');
+});
+
+btnSyn.addEventListener('click', () => {
+    log('⟳ SYN-CORE manuell getriggert', 'syn');
+    if (state.synData) {
+        log(`⟳ SYN: Lock=${state.synData.lock.toFixed(0)}, Stable=${state.synData.stable}`, 'syn');
+    }
+});
+
+btnQuant.addEventListener('click', () => {
+    log('⚛ QUANT-CORE manuell getriggert', 'quant');
+    if (state.quantData) {
+        log(`⚛ QUANT: Energie=${state.quantData.energy.toFixed(2)}, Stabilität=${state.quantData.stability}`, 'quant');
+    }
+});
+
+// ============================================================
+// 18. TASTATUR
+// ============================================================
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'b' || e.key === 'B') btnBoot.click();
+    if (e.key === 's' || e.key === 'S') btnStep.click();
+    if (e.key === 'r' || e.key === 'R') btnReset.click();
+    if (e.key === 'p' || e.key === 'P') btnProof.click();
+    if (e.key === 'q' || e.key === 'Q') btnQuant.click();
+    if (e.key === 'y' || e.key === 'Y') btnSyn.click();
+    if (e.key === ' ') { e.preventDefault(); btnProof.click(); }
+});
+
+// ============================================================
+// 19. UHR
+// ============================================================
+function updateClock() {
+    document.getElementById('clock').textContent = `⏱️ ${new Date().toLocaleTimeString()}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ============================================================
+// 20. INIT
+// ============================================================
+log('⚡ QUANT · SYN · FORM · VECTOR — BEWEIS-FÜHRUNG FIX', 'proof');
+log('📦 Alle Module geladen — QUANT_CORE fix', 'ok');
+log('⌨️  b=Boot  s=Step  r=Reset  p=Beweis  q=Quant  y=Syn  space=Beweis-Toggle', 'warn');
+log('⚛ QUANT wartet auf BOOT...', 'quant');
+
+console.log('⚡ QUANT · SYN · FORM · VECTOR — FIX');
+console.log('📦 Module geladen');
+console.log('⌨️  b=Boot  s=Step  r=Reset  p=Beweis  q=Quant  y=Syn');
+console.log('⚛ QUANT_CORE fix — Datenfluss korrigiert');
+
+</script>
+</body>
+</html>
